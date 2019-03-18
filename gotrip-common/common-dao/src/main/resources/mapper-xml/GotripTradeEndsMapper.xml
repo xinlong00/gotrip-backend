@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytzl.gotrip.mapper.GotripTradeEndsMapper">
+
+    <select id="getGotripTradeEndsById" resultType="com.ytzl.gotrip.model.GotripTradeEnds" >
+        select
+                id as id,
+                orderNo as orderNo,
+                flag as flag
+        from gotrip_trade_ends
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+        </trim>
+    </select>
+
+    <select id="getGotripTradeEndsListByMap" resultType="com.ytzl.gotrip.model.GotripTradeEnds" parameterType="java.util.Map">
+        select
+                id as id,
+                orderNo as orderNo,
+                flag as flag
+        from gotrip_trade_ends
+        <trim prefix="where" prefixOverrides="and | or">
+                    <if test="id != null and id!=''">
+                        and id=#{id}
+                    </if>
+                    <if test="orderNo != null and orderNo!=''">
+                        and orderNo=#{orderNo}
+                    </if>
+        </trim>
+         order by creationDate desc
+        <if test="beginPos != null and beginPos!='' and pageSize != null  and pageSize !='' ">
+            limit #{beginPos},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getGotripTradeEndsCountByMap" resultType="Integer"  parameterType="java.util.Map">
+        select count(*) from gotrip_trade_ends
+        <trim prefix="where" prefixOverrides="and | or">
+                <if test="id != null and id!=''">
+                    and id=#{id}
+                </if>
+                <if test="orderNo != null and orderNo!=''">
+                    and orderNo=#{orderNo}
+                </if>
+                <if test="flag != null and flag!=''">
+                    and flag=#{flag}
+                </if>
+        </trim>
+    </select>
+
+    <insert id="insertGotripTradeEnds" parameterType="com.ytzl.gotrip.model.GotripTradeEnds">
+        insert into gotrip_trade_ends(
+                        orderNo,
+                        flag)
+        values(
+                     #{orderNo},
+                    #{flag})
+    </insert>
+
+    <update id="updateGotripTradeEnds" parameterType="com.ytzl.gotrip.model.GotripTradeEnds">
+        update gotrip_trade_ends
+        <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+                    <if test="id != null and id!=''">
+                        id=#{id},
+                    </if>
+                    <if test="orderNo != null and orderNo!=''">
+                        orderNo=#{orderNo},
+                    </if>
+                    <if test="flag != null and flag!=''">
+                        flag=#{flag}
+                    </if>
+        </trim>
+    </update>
+
+    <delete id="deleteGotripTradeEndsById" parameterType="Long">
+        delete from gotrip_trade_ends where id = #{id}
+    </delete>
+</mapper>

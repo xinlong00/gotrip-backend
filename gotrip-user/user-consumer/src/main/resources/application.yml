@@ -1,0 +1,21 @@
+server:
+  port: 8011
+
+
+spring:
+  redis:
+    host: 140.143.35.90
+    password: yuntuzhilian
+  dubbo:
+    appname: user-consumer
+    registry: zookeeper://127.0.0.1:2181
+  mail:
+    host: smtp.qq.com
+    username: 1400376680@qq.com
+    password: tueyiczydwgaidii
+    default-encoding: UTF-8
+
+swagger:
+  basePackage: com.ytzl.gotrip.controller
+  title: 用户模块API接口
+  description: 用户模块对外API接口
