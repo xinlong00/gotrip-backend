@@ -1,40 +1,26 @@
 package com.ytzl.gotrip.service.impl;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.ytzl.gotrip.ext.utils.RedisUtils;
-import com.ytzl.gotrip.model.GotripOrder;
 import com.ytzl.gotrip.model.GotripUser;
 import com.ytzl.gotrip.rpc.api.RpcGotripUserService;
 import com.ytzl.gotrip.rpc.api.RpcSendMessageService;
+import com.ytzl.gotrip.rpc.api.RpcTokenService;
 import com.ytzl.gotrip.service.GotripUserService;
 import com.ytzl.gotrip.utils.common.*;
 import com.ytzl.gotrip.utils.exception.GotripException;
 import com.ytzl.gotrip.vo.userinfo.ItripUserVO;
-import org.omg.CORBA.UNKNOWN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import sun.invoke.empty.Empty;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 import java.util.regex.Pattern;
 
 @Service("gotripUserService")
@@ -43,9 +29,12 @@ public class GotripUserServiceImpl implements GotripUserService {
     private Logger LOG = LoggerFactory.getLogger(GotripUserServiceImpl.class);
 
     @Reference
-    private RpcGotripUserService rpcGotripUserService;
+    private RpcTokenService rpcTokenService;
 
     @Reference
+    private RpcGotripUserService rpcGotripUserService;
+
+    @Reference(timeout = 10000,retries = 0)
     private RpcSendMessageService rpcSendMessageService;
 
     @Resource
@@ -149,28 +138,18 @@ public class GotripUserServiceImpl implements GotripUserService {
 
         //发送邮件
         int code = DigestUtil.randomCode();
-//        rpcSendMessageService.sendMailMessage("1400376680@qq.com",to,code+"");
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("1400376680@qq.com");
-        System.out.println("当前收件邮箱：" + itripUserVO.getUserCode());
-        message.setTo(itripUserVO.getUserCode());
-        message.setSubject("请验证您的账号");
-        message.setText("您的验证码为：" + code);
-        try {
-            javaMailSender.send(message);
-            String key = Constants.RedisKeyPrefix.ACTIVATION_MAIL_PREFIX + itripUserVO.getUserCode();
-            //构建用户信息
-            GotripUser gotripUser = new GotripUser();
-            BeanUtils.copyProperties(itripUserVO,gotripUser);
-            gotripUser.setActivated(Constants.UserActivated.USER_ACTIVATED_DISABLE);
-            //密码加密
-            String md5UserPassword = DigestUtil.hmacSign(gotripUser.getUserPassword());
-            gotripUser.setUserPassword(md5UserPassword);
-            rpcGotripUserService.insertGotripUser(gotripUser);
-            redisUtils.set(key,code + "",60*3);
-        } catch (Exception e) {
-            System.out.println("邮件发送异常");
-        }
+        String key = Constants.RedisKeyPrefix.ACTIVATION_MAIL_PREFIX + itripUserVO.getUserCode();
+        //构建用户信息
+        GotripUser gotripUser = new GotripUser();
+        BeanUtils.copyProperties(itripUserVO,gotripUser);
+        gotripUser.setActivated(Constants.UserActivated.USER_ACTIVATED_DISABLE);
+        //密码加密
+        String md5UserPassword = DigestUtil.hmacSign(gotripUser.getUserPassword());
+        gotripUser.setUserPassword(md5UserPassword);
+        rpcGotripUserService.insertGotripUser(gotripUser);
+        redisUtils.set(key,code + "",60*3);
+        rpcSendMessageService.createMailCode(itripUserVO.getUserCode(),code+"");
+
         System.out.println("------->    邮件发送完毕");
     }
 

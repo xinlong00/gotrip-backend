@@ -1,13 +1,14 @@
 package com.ytzl.gotrip.rpc.service;
 import com.ytzl.gotrip.mapper.GotripUserLinkUserMapper;
+import com.ytzl.gotrip.model.GotripUser;
 import com.ytzl.gotrip.model.GotripUserLinkUser;
 import com.ytzl.gotrip.rpc.api.RpcGotripUserLinkUserService;
 import com.ytzl.gotrip.utils.common.EmptyUtils;
 import com.ytzl.gotrip.utils.common.Page;
 import com.alibaba.dubbo.config.annotation.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import com.ytzl.gotrip.utils.common.Constants;
 @Service(interfaceClass = RpcGotripUserLinkUserService.class)
 public class RpcGotripUserLinkUserServiceImpl implements RpcGotripUserLinkUserService {
 
-    @Resource
+    @Autowired
     private GotripUserLinkUserMapper gotripUserLinkUserMapper;
 
     @Override
@@ -28,6 +29,11 @@ public class RpcGotripUserLinkUserServiceImpl implements RpcGotripUserLinkUserSe
     @Override
     public List<GotripUserLinkUser>	getGotripUserLinkUserListByMap(Map<String,Object> param)throws Exception{
         return gotripUserLinkUserMapper.getGotripUserLinkUserListByMap(param);
+    }
+
+    @Override
+    public List<GotripUserLinkUser> searchGorpUserLink(Map<String, Object> param) throws Exception {
+        return gotripUserLinkUserMapper.searchGorpUserLink(param);
     }
 
     @Override
@@ -64,5 +70,6 @@ public class RpcGotripUserLinkUserServiceImpl implements RpcGotripUserLinkUserSe
         page.setRows(gotripUserLinkUserList);
         return page;
     }
+
 
 }

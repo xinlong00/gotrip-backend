@@ -20,5 +20,5 @@ public interface RpcSendMessageService {
      * @param to 接收者
      * @param code 验证码内容
      */
-//    public void createMailCode(String to,String code);
+    public void createMailCode(String to,String code);
 }

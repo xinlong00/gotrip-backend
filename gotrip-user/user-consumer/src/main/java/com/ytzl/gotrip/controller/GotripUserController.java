@@ -69,7 +69,11 @@ public class GotripUserController {
     @ApiOperation("邮箱发送激活码")
     @PostMapping("/doregister")
     public Dto sendMail(@ApiParam("用户邮箱") @RequestBody ItripUserVO itripUserVO) throws Exception {
-        gotripUserService.sendMailMessage(itripUserVO);
+        try{
+            gotripUserService.sendMailMessage(itripUserVO);
+        }catch (Exception e){
+
+        }
         return DtoUtil.returnDataSuccess("邮件发送完毕");
     }
 }

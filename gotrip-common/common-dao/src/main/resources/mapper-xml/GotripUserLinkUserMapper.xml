@@ -53,13 +53,13 @@
                     <if test="userId != null and userId!=''">
                         and userId=#{userId}
                     </if>
-                    <if test="creationDate != null and creationDate!=''">
+                    <if test="creationDate != null">
                         and creationDate=#{creationDate}
                     </if>
                     <if test="createdBy != null and createdBy!=''">
                         and createdBy=#{createdBy}
                     </if>
-                    <if test="modifyDate != null and modifyDate!=''">
+                    <if test="modifyDate != null">
                         and modifyDate=#{modifyDate}
                     </if>
                     <if test="modifiedBy != null and modifiedBy!=''">
@@ -149,13 +149,13 @@
                     <if test="userId != null and userId!=''">
                         userId=#{userId},
                     </if>
-                    <if test="creationDate != null and creationDate!=''">
+                    <if test="creationDate != null">
                         creationDate=#{creationDate},
                     </if>
                     <if test="createdBy != null and createdBy!=''">
                         createdBy=#{createdBy},
                     </if>
-                    <if test="modifyDate != null and modifyDate!=''">
+                    <if test="modifyDate != null">
                         modifyDate=#{modifyDate},
                     </if>
                     <if test="modifiedBy != null and modifiedBy!=''">
@@ -170,4 +170,16 @@
     <delete id="deleteGotripUserLinkUserById" parameterType="Long">
         delete from gotrip_user_link_user where id = #{id}
     </delete>
+
+    <select id="searchGorpUserLink" parameterType="map" resultType="com.ytzl.gotrip.model.GotripUserLinkUser">
+      SELECT id,linkUserName,linkIdCard,linkPhone,userId,creationDate,createdBy,modifiedBy,linkIdCardType FROM gotrip_user_link_user
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="linkUserName != null">
+                linkUserName LIKE CONCAT('%',#{linkUserName},'%')
+            </if>
+            <if test="userId != null">
+                AND userId = #{userId}
+            </if>
+        </trim>
+    </select>
 </mapper>

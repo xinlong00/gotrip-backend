@@ -49,18 +49,18 @@ public class RpcSendMessageServiceImpl implements RpcSendMessageService {
         }
     }
 
-//    @Override
-//    public void sendMailMessage(String from, String to, String code) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom(from);
-//        message.setTo(to);
-//        message.setSubject("请验证您的账号");
-//        message.setText("您的验证码为：" + code);
-//        try {
-//            javaMailSender.send(message);
-//        } catch (Exception e) {
-//            System.out.println("邮件发送异常");
-//        }
-//        System.out.println("------->    邮件发送完毕");
-//    }
+    @Override
+    public void createMailCode(String to, String code) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("1400376680@qq.com");
+        message.setTo(to);
+        message.setSubject("请验证您的账号");
+        message.setText("您的验证码为：" + code);
+        try {
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            System.out.println("邮件发送异常");
+        }
+        System.out.println("------->    邮件发送完毕");
+    }
 }

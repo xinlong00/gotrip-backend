@@ -7,7 +7,6 @@ import com.ytzl.gotrip.utils.common.Page;
 import com.alibaba.dubbo.config.annotation.Service;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

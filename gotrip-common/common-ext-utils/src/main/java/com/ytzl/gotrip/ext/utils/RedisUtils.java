@@ -148,4 +148,16 @@ public class RedisUtils {
     public boolean validate(String token) {
         return exist(token);
     }
+
+
+    public long ttl(final String key) {
+        return redisTemplate.execute(new RedisCallback<Long>() {
+            @Override
+            public Long doInRedis(RedisConnection redisConnection) throws DataAccessException {
+                StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+                byte keyByte[] = stringRedisSerializer.serialize(key);
+                return redisConnection.ttl(keyByte);
+            }
+        });
+    }
 }

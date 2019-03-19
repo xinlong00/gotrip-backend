@@ -68,6 +68,7 @@ public class RpcTokenServiceImpl implements RpcTokenService {
         }
         //创建Token浏览器和当前浏览器是否一致
         String md5UserAgent = DigestUtil.hmacSign(userAgent,6);
+        System.out.println(md5UserAgent);
         return token.contains(md5UserAgent);
     }
 
@@ -78,6 +79,7 @@ public class RpcTokenServiceImpl implements RpcTokenService {
 
     @Override
     public GotripUser getGotripUser(String token, String userAgent)throws Exception {
+        this.replaceToken(token,userAgent);
         //验证浏览器
         if (!this.verifyToken(token,userAgent)) {
             throw new GotripException("Token无效", ErrorCode.AUTH_TOKEN_INVALID);
@@ -85,5 +87,45 @@ public class RpcTokenServiceImpl implements RpcTokenService {
         //获取用户信息
         String gotripUserJson = (String)redisUtils.get(token);
         return JSON.parseObject(gotripUserJson,GotripUser.class);
+    }
+
+    @Override
+    public String replaceToken(String token, String userAgent) throws Exception {
+        //判断token失效
+        if (!redisUtils.exist(token)) {
+            throw new GotripException("Token已失效",ErrorCode.AUTH_TOKEN_INVALID);
+        }else{
+            //判断user-Agent归属
+            String md5UserAgent = DigestUtil.hmacSign(userAgent,6);
+            if (!token.contains(md5UserAgent)) {
+                return token;
+//                //Token无效
+//                System.out.println("--->   Token失效");
+//                throw new GotripException("Token已失效",ErrorCode.AUTH_TOKEN_INVALID);
+            }else{
+                //Token可用
+                if (redisUtils.ttl(token) == -1){
+//                    return token;
+                    return token;
+//                    throw new GotripException("Token永久",ErrorCode.AUTH_TOKEN_INVALID);
+                }else {
+                    //Token未失效,判断是否需要更新Token
+                    System.out.println("剩余时间：" + redisUtils.ttl(token));
+                    if (7200 - redisUtils.ttl(token) > 3600){
+                        System.out.println("---->   Token更新置换");
+                        GotripUser gotripUser = this.getGotripUser(token,userAgent);
+                        this.remoteLogin(token);
+                        String newToken = this.generateToken(gotripUser,userAgent);
+                        this.saveToken(newToken,gotripUser);
+                        return newToken;
+                    }else{
+                        return token;
+//                        System.out.println("--->   Token无需置换");
+//                        return token;
+//                        throw new GotripException("Token无需更新",ErrorCode.AUTH_TOKEN_INVALID);
+                    }
+                }
+            }
+        }
     }
 }

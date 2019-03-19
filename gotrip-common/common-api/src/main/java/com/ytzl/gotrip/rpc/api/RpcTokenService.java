@@ -1,6 +1,7 @@
 package com.ytzl.gotrip.rpc.api;
 
 import com.ytzl.gotrip.model.GotripUser;
+import com.ytzl.gotrip.utils.exception.GotripException;
 
 /**
  * @author xinlong00
@@ -46,4 +47,10 @@ public interface RpcTokenService {
      * @return 用户信息
      */
     public GotripUser getGotripUser(String token,String userAgent) throws Exception;
+
+
+    /**
+     * Token置换
+     */
+    public String replaceToken(String token,String userAgent) throws Exception;
 }

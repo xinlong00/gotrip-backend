@@ -1,5 +1,6 @@
 package com.ytzl.gotrip.rpc.api;
 
+import com.ytzl.gotrip.model.GotripUser;
 import com.ytzl.gotrip.model.GotripUserLinkUser;
 import com.ytzl.gotrip.utils.common.Page;
 import java.util.List;
@@ -16,6 +17,8 @@ public interface RpcGotripUserLinkUserService {
     public GotripUserLinkUser getGotripUserLinkUserById(Long id)throws Exception;
 
     public List<GotripUserLinkUser>	getGotripUserLinkUserListByMap(Map<String, Object> param)throws Exception;
+
+    public List<GotripUserLinkUser>	searchGorpUserLink(Map<String, Object> param)throws Exception;
 
     public Integer getGotripUserLinkUserCountByMap(Map<String, Object> param)throws Exception;
 

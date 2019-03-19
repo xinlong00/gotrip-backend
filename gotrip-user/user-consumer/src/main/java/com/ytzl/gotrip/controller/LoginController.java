@@ -55,8 +55,10 @@ public class LoginController {
     @ApiOperation(value = "用户注销")
     @GetMapping("/logout")
     public Dto logout(@ApiParam(value = "令牌") @RequestHeader("token") String token,
-                      @ApiParam(hidden = true) @RequestHeader("user-agent") String userAgent) throws Exception{
-        loginService.logout(token,userAgent);
+                      @ApiParam(hidden = true) @RequestHeader("user-agent") String userAgent) throws Exception {
+        System.out.println("token:" + token);
+        System.out.println("user-agent:" + userAgent);
+        loginService.logout(token, userAgent);
         return DtoUtil.returnDataSuccess("注销成功");
     }
 }

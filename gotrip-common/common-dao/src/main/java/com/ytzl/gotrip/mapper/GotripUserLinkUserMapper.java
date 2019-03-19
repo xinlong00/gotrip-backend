@@ -18,4 +18,6 @@ public interface GotripUserLinkUserMapper {
 
 	public Integer deleteGotripUserLinkUserById(@Param(value = "id") Long id)throws Exception;
 
+	public List<GotripUserLinkUser> searchGorpUserLink(Map<String, Object> param);
+
 }
