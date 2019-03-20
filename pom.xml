@@ -16,6 +16,7 @@
     <modules>
         <module>gotrip-common</module>
         <module>gotrip-user</module>
+        <module>gotrip-hotel</module>
     </modules>
 
     <properties>
